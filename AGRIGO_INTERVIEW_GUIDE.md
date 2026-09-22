@@ -1,4 +1,4 @@
-# AgriGo — Interview Explanation Guide
+# AgriGo
 
 
 
