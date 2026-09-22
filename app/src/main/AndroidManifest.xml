@@ -21,6 +21,7 @@
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
 
     <application
+        android:name=".AgriGoApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -164,6 +165,24 @@
             android:showOnLockScreen="true"
             android:turnScreenOn="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- Settings Activity -->
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Help & Support Activity -->
+        <activity
+            android:name=".activities.HelpSupportActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- Driver Earnings Activity -->
+        <activity
+            android:name=".activities.DriverEarningsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <!-- Driver Dispatch Service -->
         <service

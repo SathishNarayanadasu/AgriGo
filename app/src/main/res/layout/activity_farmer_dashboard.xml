@@ -10,7 +10,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavigation"
         android:scrollbars="none"
         android:clipChildren="false"
         android:clipToPadding="false">
@@ -255,23 +254,25 @@
                         android:gravity="center_vertical">
 
                         <FrameLayout
-                            android:layout_width="56dp"
+                            android:layout_width="80dp"
                             android:layout_height="56dp"
                             android:layout_marginEnd="16dp">
 
                             <View
-                                android:layout_width="56dp"
-                                android:layout_height="56dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
                                 android:background="@drawable/bg_icon_circle_green"
-                                android:backgroundTint="@color/primary_green_soft" />
+                                android:backgroundTint="@color/primary_green_soft"
+                                android:visibility="gone" />
 
                             <com.google.android.material.imageview.ShapeableImageView
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
+                                android:id="@+id/imgLaborTeam"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_labor_land_prep"
+                                android:src="@drawable/labor_team_group"
                                 android:scaleType="centerCrop"
-                                app:shapeAppearanceOverlay="@style/ShapeAppearance.AgriGo.Circle" />
+                                app:shapeAppearanceOverlay="@style/ShapeAppearance.AgriGo.MediumComponent" />
                         </FrameLayout>
 
                         <LinearLayout
@@ -489,17 +490,5 @@
 
         </LinearLayout>
     </ScrollView>
-
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        app:itemIconTint="@color/primary_blue"
-        app:itemTextColor="@color/text_primary"
-        app:menu="@menu/bottom_nav_menu"
-        app:elevation="8dp" />
 
 </RelativeLayout>

@@ -58,7 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import timber.log.Timber;
+
 
 public class LaborHomeActivity extends BaseActivity implements OnMapReadyCallback {
 
@@ -301,12 +301,12 @@ public class LaborHomeActivity extends BaseActivity implements OnMapReadyCallbac
     private void updateStatusText(boolean isOnline) {
         if (isOnline) {
             tvStatusDescription.setText(getString(R.string.status_online_label));
-            tvStatusDescription.setTextColor(getResources().getColor(R.color.primary_green));
+            tvStatusDescription.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.primary_green));
             setEmptyState(true);
             if (findViewById(R.id.cardMap) != null) findViewById(R.id.cardMap).setVisibility(View.VISIBLE);
         } else {
             tvStatusDescription.setText(getString(R.string.status_offline_label));
-            tvStatusDescription.setTextColor(getResources().getColor(R.color.text_secondary));
+            tvStatusDescription.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary));
             setEmptyState(false);
             if (findViewById(R.id.cardMap) != null) findViewById(R.id.cardMap).setVisibility(View.GONE);
         }

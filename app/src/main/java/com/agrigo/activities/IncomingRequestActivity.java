@@ -134,7 +134,7 @@ public class IncomingRequestActivity extends BaseActivity implements OnMapReadyC
                     tvPickup.setText("Pickup: " + (sourceObj != null ? sourceObj : "Location"));
                     
                     StringBuilder details = new StringBuilder();
-                    details.append("Drop: ").append(toL != null ? toL : "N/A");
+                    details.append("Drop: \uD83D\uDD12 Revealed after OTP verification");
                     details.append("\nCrop: ").append(crop != null ? crop : "N/A");
                     details.append(" | ").append(weight != null ? String.format("%.0f", weight) : "0").append("kg");
                     if (estimatedPrice != null && estimatedPrice > 0) {

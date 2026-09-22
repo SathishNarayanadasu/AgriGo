@@ -62,15 +62,29 @@ public class LoginActivity extends BaseActivity {
         // Initialize views first, always
         initializeViews();
 
-        // Cross-check: if SharedPrefs says logged in but Firebase has no session, clear stale prefs
-        if (preferenceManager.isLoggedIn() && mAuth.getCurrentUser() == null) {
+        // Cross-check the local cache with the Firebase session.  SharedPreferences
+        // belongs to this installation, so it must never be used for a different
+        // Firebase account after somebody else signs in on the same phone.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (preferenceManager.isLoggedIn() && currentUser == null) {
             // Stale login preference found, but FirebaseAuth has no session. Clearing.
             preferenceManager.clearAll();
         }
 
-        if (preferenceManager.isLoggedIn() && mAuth.getCurrentUser() != null) {
+        if (preferenceManager.isLoggedIn()
+                && currentUser != null
+                && currentUser.getUid().equals(preferenceManager.getUserId())) {
             // User already logged in, navigating to dashboard.
             navigateToDashboard();
+            return;
+        }
+
+        // A valid Firebase session for a different account is not an error. It
+        // commonly happens when multiple people use the same phone. Replace the
+        // old local cache with the profile for the authenticated account.
+        if (currentUser != null) {
+            preferenceManager.clearAll();
+            fetchUserProfile(currentUser.getUid());
             return;
         }
 
@@ -190,9 +204,11 @@ public class LoginActivity extends BaseActivity {
 
                         navigateToDashboard();
                     } else {
-                        // User profile document does not exist
-                        ToastUtils.showShort(this, "User profile not found");
-                        mAuth.signOut(); // Ensure they don't stay in broken state
+                        // Do not sign the user out here. A Firestore write can be
+                        // delayed or the device may be temporarily offline; signing
+                        // out turns a recoverable profile problem into a lost session.
+                        tvErrorMessage.setText("Your account profile is still being set up. Please wait a moment and try again.");
+                        tvErrorMessage.setVisibility(View.VISIBLE);
                     }
                 } else {
                     // Error fetching profile
@@ -206,8 +222,8 @@ public class LoginActivity extends BaseActivity {
                         tvErrorMessage.setText("Error fetching profile: " + errMsg);
                     }
                     
-                    // Note: If this says 'PERMISSION_DENIED', the Firestore security rules need to be updated
-                    // in the Firebase Console to allow: read, write: if request.auth != null;
+                    // Keep the Firebase session intact. The user can retry after a
+                    // transient network/Firestore problem instead of logging in again.
                 }
             });
     }

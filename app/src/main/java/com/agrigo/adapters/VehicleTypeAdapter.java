@@ -73,7 +73,7 @@ public class VehicleTypeAdapter extends BaseAdapter {
         if (position == selectedPosition) {
             holder.ivCheck.setVisibility(View.VISIBLE);
             holder.root.setBackgroundResource(R.drawable.bg_vehicle_selected);
-            holder.tvName.setTextColor(context.getResources().getColor(R.color.primary_blue));
+            holder.tvName.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.primary_blue));
         } else {
             holder.ivCheck.setVisibility(View.GONE);
             holder.root.setBackgroundResource(android.R.color.transparent);

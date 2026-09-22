@@ -7,7 +7,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+
 
 import com.agrigo.R;
 import com.google.android.material.button.MaterialButton;
@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LaborSettingsActivity extends AppCompatActivity {
+public class LaborSettingsActivity extends BaseActivity {
 
     private TextInputEditText editWages, editAvailability, dropdownWorkType;
     private TextInputLayout layoutWorkType;
@@ -127,7 +127,7 @@ public class LaborSettingsActivity extends AppCompatActivity {
             if (position == selectedWorkPosition) {
                 ivCheck.setVisibility(View.VISIBLE);
                 root.setBackgroundResource(R.drawable.bg_vehicle_selected);
-                tvName.setTextColor(getResources().getColor(R.color.primary_blue));
+                tvName.setTextColor(androidx.core.content.ContextCompat.getColor(LaborSettingsActivity.this, R.color.primary_blue));
             } else {
                 ivCheck.setVisibility(View.GONE);
                 root.setBackgroundResource(android.R.color.transparent);
@@ -249,9 +249,17 @@ public class LaborSettingsActivity extends AppCompatActivity {
         if (laborId == null) return;
         
         btnSave.setEnabled(false);
-        
-        int dailyWage = Integer.parseInt(wages);
-        int maxAvail = Integer.parseInt(availability);
+
+        int dailyWage;
+        int maxAvail;
+        try {
+            dailyWage = Integer.parseInt(wages);
+            maxAvail = Integer.parseInt(availability);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Please enter valid numbers", Toast.LENGTH_SHORT).show();
+            btnSave.setEnabled(true);
+            return;
+        }
         
         List<String> workTypesList = new ArrayList<>();
         workTypesList.add(workType.toLowerCase().trim());

@@ -102,11 +102,16 @@ public class WelcomeActivity extends BaseActivity {
                             navigateToDashboard(role);
                         } else {
                             Timber.w("No user document found during Welcome session check for UID: %s", uid);
-                            mAuth.signOut();
+                            // Keep Firebase Auth signed in. Profile creation/read can
+                            // be delayed, and forcing sign-out here causes users to be
+                            // logged out simply because Firestore is temporarily down.
+                            preferenceManager.clearAll();
+                            ToastUtils.showShort(this, "Your account profile is still being set up. Please try again shortly.");
                         }
                     } else {
                         Timber.e(task.getException(), "Session error reading Firestore in Welcome session check.");
-                        ToastUtils.showShort(this, "Session error. Please login.");
+                        // A profile read failure is not an authentication failure.
+                        ToastUtils.showShort(this, "Could not load your profile. Check your connection and try again.");
                     }
                 });
         } else {

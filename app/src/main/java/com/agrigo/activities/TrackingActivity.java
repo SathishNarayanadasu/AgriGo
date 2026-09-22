@@ -123,6 +123,7 @@ public class TrackingActivity extends BaseActivity implements OnMapReadyCallback
     private LatLng dropLatLng;        // Dest
     private String bookingOtp = "";
     private String driverPhone = "";
+    private String storedDestAddress = "";
     
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private boolean isFirstLocationUpdate = true;
@@ -188,16 +189,20 @@ public class TrackingActivity extends BaseActivity implements OnMapReadyCallback
         
         btnVerifyOtp.setOnClickListener(v -> {
             String enteredOtp = etOtp.getText().toString().trim();
-            if (enteredOtp.equals(bookingOtp) || enteredOtp.equals("1234")) {
-                // Success! Moving to State 3 (To Drop)
+            if (enteredOtp.length() == 4 && enteredOtp.equals(bookingOtp)) {
+                // OTP verified — reveal destination and start trip
                 currentState = 3;
-                destinationLatLng = dropLatLng; // Change destination to Drop
-                isFirstLocationUpdate = true; // Force reroute
+                destinationLatLng = dropLatLng;
+                isFirstLocationUpdate = true;
                 updateUI();
-                Toast.makeText(this, "OTP Verified! Navigating to Drop.", Toast.LENGTH_SHORT).show();
+                // Reveal destination to driver immediately
+                if (isDriver && textDropAddress != null && !storedDestAddress.isEmpty()) {
+                    textDropAddress.setText("Drop: " + storedDestAddress);
+                }
+                Toast.makeText(this, "\u2705 OTP Verified! Navigating to destination.", Toast.LENGTH_SHORT).show();
                 if (requestId != null) db.collection("transport_requests").document(requestId).update("status", "on_trip");
             } else {
-                Toast.makeText(this, "Invalid OTP. Please try again.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "\u274C Invalid OTP. Please try again.", Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -269,6 +274,7 @@ public class TrackingActivity extends BaseActivity implements OnMapReadyCallback
                 if (documentSnapshot != null && documentSnapshot.exists()) {
                     String sourceAddress = documentSnapshot.getString("sourceAddress");
                     String destAddress = documentSnapshot.getString("destAddress");
+                    if (destAddress != null) storedDestAddress = destAddress;
                     String cropType = documentSnapshot.getString("cropType");
                     Double weight = documentSnapshot.getDouble("weight");
                     bookingOtp = documentSnapshot.getString("otp");
@@ -277,13 +283,20 @@ public class TrackingActivity extends BaseActivity implements OnMapReadyCallback
                     
                     textPickupAddress.setText(sourceAddress != null ? "Pickup: " + sourceAddress : "Retrieving pickup...");
                     if (textDropAddress != null) {
-                        textDropAddress.setText(destAddress != null ? "Drop: " + destAddress : "Drop: Loading...");
+                        if (isDriver && currentState < 3) {
+                            // Security: Hide destination from driver until OTP verified
+                            textDropAddress.setText("Drop: \uD83D\uDD12 Hidden until OTP verified");
+                        } else {
+                            textDropAddress.setText(destAddress != null ? "Drop: " + destAddress : "Drop: Loading...");
+                        }
                     }
                     
                     if (!isDriver) {
-                        textCargoDetails.setText("OTP: " + (bookingOtp != null ? bookingOtp : "----") +
+                        // Farmer sees OTP prominently — they share it verbally with the driver
+                        textCargoDetails.setText("\uD83D\uDD11 Your OTP: " + (bookingOtp != null ? bookingOtp : "----") +
+                            "\nShare this OTP with the driver at pickup" +
                             "\nCrop: " + (cropType != null ? cropType : "--") +
-                            " • Weight: " + String.format(Locale.getDefault(), "%.0fKG", weight != null ? weight : 0.0));
+                            " \u2022 Weight: " + String.format(Locale.getDefault(), "%.0fKG", weight != null ? weight : 0.0));
                         
                         // Extract targetDriverId here if not set
                         if (targetDriverId == null) {
@@ -294,10 +307,11 @@ public class TrackingActivity extends BaseActivity implements OnMapReadyCallback
                             }
                         }
                     } else {
-                        textCargoDetails.setText(String.format(Locale.getDefault(), "OTP to share: %s\nCrop Type: %s • Weight: %.0fKG", 
-                            bookingOtp != null ? bookingOtp : "----",
-                            cropType != null ? cropType : "Chilli", 
-                            weight != null ? weight : 500.0));
+                        // Driver does NOT see OTP — only cargo details and verification status
+                        textCargoDetails.setText(String.format(Locale.getDefault(), "Crop: %s \u2022 Weight: %.0fKG\n%s", 
+                            cropType != null ? cropType : "N/A", 
+                            weight != null ? weight : 0.0,
+                            currentState < 3 ? "\u23F3 OTP verification pending at pickup" : "\u2705 OTP Verified \u2014 Trip Active"));
                     }
                     
                     Double sLat = documentSnapshot.getDouble("sourceLat"); 
@@ -409,14 +423,18 @@ public class TrackingActivity extends BaseActivity implements OnMapReadyCallback
                     btnAction.setText("\uD83D\uDCDE Call Driver");
                 }
                 break;
-            case 2: // Driver arrived, OTP verification
-                textCurrentStatus.setText("Driver Arrived");
-                if (!isDriver) {
+            case 2: // Driver arrived — OTP verification required
+                textCurrentStatus.setText("Driver Arrived \u2014 OTP Verification");
+                if (isDriver) {
+                    // Driver enters OTP received verbally from farmer
                     btnAction.setVisibility(View.GONE);
                     layoutOtpEntry.setVisibility(View.VISIBLE);
                 } else {
-                    btnAction.setText("Waiting for OTP...");
-                    btnAction.setEnabled(false);
+                    // Farmer sees instruction to share OTP with driver
+                    layoutOtpEntry.setVisibility(View.GONE);
+                    btnAction.setText("\uD83D\uDCDE Call Driver");
+                    btnAction.setVisibility(View.VISIBLE);
+                    btnAction.setEnabled(true);
                 }
                 layoutNavigationInstruction.setVisibility(View.GONE);
                 textEta.setText("Arrived at Pickup");
@@ -642,8 +660,8 @@ public class TrackingActivity extends BaseActivity implements OnMapReadyCallback
                     .zIndex(1.0f));
         }
 
-        // Add Drop Pin
-        if (dropMarker == null && dropLatLng != null) {
+        // Add Drop Pin (hidden from driver until OTP verified — Stage 2 security)
+        if (dropMarker == null && dropLatLng != null && (!isDriver || currentState >= 3)) {
             dropMarker = mMap.addMarker(new MarkerOptions()
                     .position(dropLatLng)
                     .title("Drop Location")

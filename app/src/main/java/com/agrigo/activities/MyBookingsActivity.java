@@ -38,7 +38,7 @@ public class MyBookingsActivity extends BaseActivity {
     private View layoutLoadingState;
     private TextView tvEmptyTitle;
     private TextView tvEmptySubtitle;
-    private BottomNavigationView bottomNavigationView;
+    private View btnBack;
 
     // Data and adapters
     private PreferenceManager preferenceManager;
@@ -71,7 +71,7 @@ public class MyBookingsActivity extends BaseActivity {
                 : preferenceManager.getUserId();
 
         initializeViews();
-        setupBottomNavigation();
+        setupListeners();
         
         // Initial state
         layoutLoadingState.setVisibility(View.VISIBLE);
@@ -85,7 +85,7 @@ public class MyBookingsActivity extends BaseActivity {
         rvBookings = findViewById(R.id.rvBookings);
         layoutEmptyState = findViewById(R.id.layoutEmptyState);
         layoutLoadingState = findViewById(R.id.layoutLoadingState);
-        bottomNavigationView = findViewById(R.id.bottomNavigation);
+        btnBack = findViewById(R.id.btnBack);
         
         tvEmptyTitle = layoutEmptyState.findViewById(R.id.tvEmptyTitle);
         tvEmptySubtitle = layoutEmptyState.findViewById(R.id.tvEmptySubtitle);
@@ -98,23 +98,10 @@ public class MyBookingsActivity extends BaseActivity {
         rvBookings.setAdapter(activeJobsAdapter);
     }
     
-    private void setupBottomNavigation() {
-        bottomNavigationView.setSelectedItemId(R.id.nav_bookings);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                startActivity(new Intent(this, FarmerDashboardActivity.class));
-                return true;
-            } else if (itemId == R.id.nav_bookings) {
-                return true;
-            } else if (itemId == R.id.nav_track) {
-                return true;
-            } else if (itemId == R.id.nav_profile) {
-                startActivity(new Intent(this, ProfileActivity.class));
-                return true;
-            }
-            return false;
-        });
+    private void setupListeners() {
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> onBackPressed());
+        }
     }
 
     private void listenToActiveJobs() {
@@ -127,9 +114,11 @@ public class MyBookingsActivity extends BaseActivity {
                         transportJobs.clear();
                         for (DocumentSnapshot doc : value.getDocuments()) {
                             String cType = doc.getString("cropType");
-                            double wgt = doc.getDouble("weight") != null ? doc.getDouble("weight") : 0.0;
+                            Double weightObj = doc.getDouble("weight");
+                            double wgt = weightObj != null ? weightObj : 0.0;
                             String status = doc.getString("status");
-                            long ts = doc.getLong("timestamp") != null ? doc.getLong("timestamp") : 0;
+                            Long tsObj = doc.getLong("timestamp");
+                            long ts = tsObj != null ? tsObj : 0;
                             
                             String title = (cType != null ? cType : "Crops") + " • " + wgt + " Tons";
                             String subtitle = doc.getString("source") + " to " + doc.getString("destination");
@@ -160,7 +149,8 @@ public class MyBookingsActivity extends BaseActivity {
                             String mType = doc.getString("machineryType");
                             String dur = doc.getString("duration");
                             String status = doc.getString("status");
-                            long ts = doc.getLong("timestamp") != null ? doc.getLong("timestamp") : 0;
+                            Long tsObj = doc.getLong("timestamp");
+                            long ts = tsObj != null ? tsObj : 0;
                             
                             String title = (mType != null ? mType : "Machinery") + " • " + dur + " Hrs";
                             String subtitle = doc.getString("address") != null ? doc.getString("address") : "Farm Location";
@@ -192,7 +182,8 @@ public class MyBookingsActivity extends BaseActivity {
                             Long reqWorkers = doc.getLong("workersRequired");
                             Long accWorkers = doc.getLong("workersAccepted");
                             String status = doc.getString("status");
-                            long ts = doc.getLong("timestamp") != null ? doc.getLong("timestamp") : 0;
+                            Long tsObj = doc.getLong("timestamp");
+                            long ts = tsObj != null ? tsObj : 0;
                             
                             long req = reqWorkers != null ? reqWorkers : 0;
                             long acc = accWorkers != null ? accWorkers : 0;
@@ -270,9 +261,6 @@ public class MyBookingsActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (bottomNavigationView != null) {
-            bottomNavigationView.setSelectedItemId(R.id.nav_bookings);
-        }
     }
 
     @Override

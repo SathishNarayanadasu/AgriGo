@@ -125,6 +125,10 @@ public class DriverHomeActivity extends BaseActivity {
         });
 
         cardActiveTracking.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                Toast.makeText(this, "Not authenticated", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String driverId = mAuth.getCurrentUser().getUid();
             FirebaseFirestore.getInstance().collection("transport_requests")
                 .whereEqualTo("driverId", driverId)
@@ -164,19 +168,30 @@ public class DriverHomeActivity extends BaseActivity {
                 updateAvailability(isChecked);
             });
             // Set initial state
-            db.collection("drivers").document(mAuth.getUid()).get().addOnSuccessListener(doc -> {
-                if (doc.exists() && doc.contains("isAvailable")) {
-                    switchAvailability.setChecked(doc.getBoolean("isAvailable"));
-                }
-            });
+            if (mAuth.getUid() != null) {
+                db.collection("drivers").document(mAuth.getUid()).get().addOnSuccessListener(doc -> {
+                    if (doc.exists() && doc.contains("isAvailable")) {
+                        switchAvailability.setChecked(Boolean.TRUE.equals(doc.getBoolean("isAvailable")));
+                    }
+                }).addOnFailureListener(e -> {
+                    android.util.Log.e("DriverHomeActivity", "Error fetching availability", e);
+                });
+            }
         }
     }
 
     private void updateAvailability(boolean available) {
         String uid = mAuth.getUid();
+        if (uid == null) {
+            Toast.makeText(this, "Session expired", Toast.LENGTH_SHORT).show();
+            return;
+        }
         db.collection("drivers").document(uid).update("isAvailable", available, "status", available ? "AVAILABLE" : "OFFLINE")
             .addOnSuccessListener(aVoid -> {
                 tvDriverStatus.setText(available ? "Online — Accepting Loads" : "Offline — No Requests");
+            })
+            .addOnFailureListener(e -> {
+                Toast.makeText(this, "Failed to update status", Toast.LENGTH_SHORT).show();
             });
     }
 
@@ -236,6 +251,10 @@ public class DriverHomeActivity extends BaseActivity {
 
     private void acceptTransportRequest(com.agrigo.models.DriverRequest request) {
         String uid = mAuth.getUid();
+        if (uid == null) {
+            Toast.makeText(this, "Session expired", Toast.LENGTH_SHORT).show();
+            return;
+        }
         com.google.firebase.firestore.DocumentReference docRef = db.collection("transport_requests").document(request.getId());
         
         db.runTransaction(transaction -> {

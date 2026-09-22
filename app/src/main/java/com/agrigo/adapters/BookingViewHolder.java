@@ -52,7 +52,7 @@ public class BookingViewHolder extends RecyclerView.ViewHolder {
         tvStatus.setText(getStatusLabel(booking.getStatus()));
         // Note: New premium style uses bg_card_blue_tint and primary_blue text
         tvStatus.setBackgroundResource(R.drawable.bg_card_blue_tint);
-        tvStatus.setTextColor(context.getResources().getColor(R.color.primary_blue));
+        tvStatus.setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.primary_blue));
         
         // Set crop type and weight
         String cropName = booking.getCropType();

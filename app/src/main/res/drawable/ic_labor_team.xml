@@ -1,0 +1,19 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <!-- Placeholder Silhouette for Labor Team -->
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M100,100m-80,0a80,80 0,1 1,160 0a80,80 0,1 1,-160 0" />
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M100,60c-15,0 -27,12 -27,27s12,27 27,27 27,-12 27,-27 -12,-27 -27,-27zM100,120c-30,0 -54,18 -54,40v10h108v-10c0,-22 -24,-40 -54,-40z" />
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M60,70c-12,0 -22,10 -22,22s10,22 22,22 22,-10 22,-22 -10,-22 -22,-22zM60,120c-25,0 -45,15 -45,35v8h90v-8c0,-20 -20,-35 -45,-35z" />
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M140,70c-12,0 -22,10 -22,22s10,22 22,22 22,-10 22,-22 -10,-22 -22,-22zM140,120c-25,0 -45,15 -45,35v8h90v-8c0,-20 -20,-35 -45,-35z" />
+</vector>

@@ -244,20 +244,22 @@ public class LaborWorkerProfileActivity extends BaseActivity {
 
     private void showLanguageDialog() {
         String[] languages = {"English", "తెలుగు (Telugu)"};
+        final String[] langCodes = {"en", "te"};
         int checkedItem = com.agrigo.utils.LocaleHelper.getLanguage(this).equals("te") ? 1 : 0;
+        final int[] selected = {checkedItem};
 
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle(getString(R.string.language_label))
                 .setSingleChoiceItems(languages, checkedItem, (dialog, which) -> {
-                    String langCode = (which == 1) ? "te" : "en";
+                    selected[0] = which;
+                })
+                .setPositiveButton(R.string.save, (dialog, which) -> {
+                    String langCode = langCodes[selected[0]];
                     com.agrigo.utils.LocaleHelper.setLocale(this, langCode);
                     dialog.dismiss();
-                    
-                    ToastUtils.showShort(this, "Language set to: " + (which == 1 ? "Telugu" : "English"));
-                    
-                    recreate();
+                    // setApplicationLocales automatically recreates the activity
                 })
-                .setNegativeButton(getString(R.string.cancel), null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 }

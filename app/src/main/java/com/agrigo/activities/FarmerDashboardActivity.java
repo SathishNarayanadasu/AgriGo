@@ -22,7 +22,7 @@ public class FarmerDashboardActivity extends BaseActivity {
     private com.google.android.material.card.MaterialCardView cardTransport, cardMachinery, cardLabor;
     private com.google.android.material.card.MaterialCardView btnQuickBookings, btnQuickTrack, btnQuickProfile;
     
-    private BottomNavigationView bottomNavigationView;
+
 
     private PreferenceManager preferenceManager;
 
@@ -52,7 +52,7 @@ public class FarmerDashboardActivity extends BaseActivity {
         btnQuickTrack = findViewById(R.id.btnQuickTrack);
         btnQuickProfile = findViewById(R.id.btnQuickProfile);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigation);
+
     }
 
     private void setupListeners() {
@@ -68,24 +68,6 @@ public class FarmerDashboardActivity extends BaseActivity {
             startActivity(new Intent(this, MyBookingsActivity.class));
         });
         btnQuickProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
-        // Bottom Navigation
-        bottomNavigationView.setSelectedItemId(R.id.nav_home);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                return true;
-            } else if (itemId == R.id.nav_bookings) {
-                startActivity(new Intent(this, MyBookingsActivity.class));
-                return true;
-            } else if (itemId == R.id.nav_track) {
-                startActivity(new Intent(this, MyBookingsActivity.class));
-                return true;
-            } else if (itemId == R.id.nav_profile) {
-                startActivity(new Intent(this, ProfileActivity.class));
-                return true;
-            }
-            return false;
-        });
     }
 
     private void loadUserData() {
@@ -98,8 +80,5 @@ public class FarmerDashboardActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (bottomNavigationView != null) {
-            bottomNavigationView.setSelectedItemId(R.id.nav_home);
-        }
     }
 }

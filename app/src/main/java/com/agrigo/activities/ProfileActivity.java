@@ -128,7 +128,7 @@ public class ProfileActivity extends BaseActivity {
             if (position == selectedPosition) {
                 ivCheck.setVisibility(View.VISIBLE);
                 root.setBackgroundResource(R.drawable.bg_vehicle_selected);
-                tvName.setTextColor(getResources().getColor(R.color.primary_blue));
+                tvName.setTextColor(androidx.core.content.ContextCompat.getColor(ProfileActivity.this, R.color.primary_blue));
             } else {
                 ivCheck.setVisibility(View.GONE);
                 root.setBackgroundResource(android.R.color.transparent);
@@ -148,30 +148,36 @@ public class ProfileActivity extends BaseActivity {
     }
 
 
-    /** Updates the leading icon on the Vehicle Type TextInputLayout with a scaled down image. */
     private void updateFieldIcon(int position) {
         if (position >= 0 && position < VEHICLE_ICONS.length) {
             int drawableId = VEHICLE_ICONS[position];
-            int targetSizePx = (int) (28 * getResources().getDisplayMetrics().density);
-            
-            android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeResource(getResources(), drawableId);
-            if (bitmap != null) {
-                float ratio = Math.min(
-                    (float) targetSizePx / bitmap.getWidth(),
-                    (float) targetSizePx / bitmap.getHeight()
-                );
-                int width = Math.round(ratio * bitmap.getWidth());
-                int height = Math.round(ratio * bitmap.getHeight());
-                if (width <= 0) width = 1;
-                if (height <= 0) height = 1;
-                
-                android.graphics.Bitmap scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap, width, height, true);
-                android.graphics.drawable.BitmapDrawable d = new android.graphics.drawable.BitmapDrawable(getResources(), scaledBitmap);
-                layoutVehicleType.setStartIconDrawable(d);
-            } else {
-                layoutVehicleType.setStartIconDrawable(drawableId);
+            try {
+                int targetSizePx = (int) (28 * getResources().getDisplayMetrics().density);
+                android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeResource(getResources(), drawableId);
+                if (bitmap != null) {
+                    float ratio = Math.min(
+                        (float) targetSizePx / bitmap.getWidth(),
+                        (float) targetSizePx / bitmap.getHeight()
+                    );
+                    int width = Math.round(ratio * bitmap.getWidth());
+                    int height = Math.round(ratio * bitmap.getHeight());
+                    if (width <= 0) width = 1;
+                    if (height <= 0) height = 1;
+                    
+                    android.graphics.Bitmap scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap, width, height, true);
+                    android.graphics.drawable.BitmapDrawable d = new android.graphics.drawable.BitmapDrawable(getResources(), scaledBitmap);
+                    layoutVehicleType.setStartIconDrawable(d);
+                } else {
+                    layoutVehicleType.setStartIconDrawable(drawableId);
+                }
+                layoutVehicleType.setStartIconTintList(null); // Preserve PNG colors
+            } catch (Exception e) {
+                android.util.Log.e("ProfileActivity", "Failed to decode/scale icon, using default", e);
+                try {
+                    layoutVehicleType.setStartIconDrawable(drawableId);
+                    layoutVehicleType.setStartIconTintList(null);
+                } catch (Exception ex) {}
             }
-            layoutVehicleType.setStartIconTintList(null); // Preserve PNG colors
         }
     }
 
@@ -274,18 +280,22 @@ public class ProfileActivity extends BaseActivity {
 
     private void showLanguageDialog() {
         String[] languages = {"English", "తెలుగు (Telugu)"};
+        final String[] langCodes = {"en", "te"};
         int checkedItem = com.agrigo.utils.LocaleHelper.getLanguage(this).equals("te") ? 1 : 0;
+        final int[] selected = {checkedItem};
 
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle(getString(R.string.language_label))
                 .setSingleChoiceItems(languages, checkedItem, (dialog, which) -> {
-                    String langCode = (which == 1) ? "te" : "en";
+                    selected[0] = which;
+                })
+                .setPositiveButton(R.string.save, (dialog, which) -> {
+                    String langCode = langCodes[selected[0]];
                     com.agrigo.utils.LocaleHelper.setLocale(this, langCode);
                     dialog.dismiss();
-                    
-                    recreate();
+                    // setApplicationLocales automatically recreates the activity
                 })
-                .setNegativeButton(getString(R.string.cancel), null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 

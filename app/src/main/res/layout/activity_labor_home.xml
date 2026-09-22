@@ -88,11 +88,14 @@
                     android:padding="20dp"
                     android:gravity="center_vertical">
                     
-                    <View
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/bg_icon_circle_green"
-                        android:layout_marginEnd="16dp"/>
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/imgLaborTeamPartner"
+                        android:layout_width="80dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/labor_team_group"
+                        android:scaleType="centerCrop"
+                        android:layout_marginEnd="16dp"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.AgriGo.MediumComponent" />
 
                     <LinearLayout
                         android:layout_width="0dp"

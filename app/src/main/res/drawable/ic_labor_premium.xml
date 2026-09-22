@@ -1,0 +1,95 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+
+    <!-- Subtle Shadow -->
+    <path
+        android:pathData="M 120 210 C 170 210 210 190 210 170 C 210 150 170 130 120 130 C 70 130 30 150 30 170 C 30 190 70 210 120 210 Z"
+        android:fillAlpha="0.1"
+        android:fillColor="#000000" />
+
+    <!-- Body (Shirt/Overalls) - Isometric Block -->
+    <path
+        android:pathData="M 70 180 L 170 180 L 180 140 C 180 120 160 110 120 110 C 80 110 60 120 60 140 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="120" android:startY="110"
+                android:endX="120" android:endY="180"
+                android:type="linear">
+                <item android:offset="0" android:color="#4CAF50"/>
+                <item android:offset="1" android:color="#2E7D32"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Neck -->
+    <path
+        android:pathData="M 110 115 L 130 115 L 130 100 L 110 100 Z"
+        android:fillColor="#FFCCBC" />
+
+    <!-- Head (Face) -->
+    <path
+        android:pathData="M 95 100 C 95 70 145 70 145 100 C 145 120 120 130 120 130 C 120 130 95 120 95 100 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="120" android:startY="70"
+                android:endX="120" android:endY="130"
+                android:type="linear">
+                <item android:offset="0" android:color="#FFE0B2"/>
+                <item android:offset="1" android:color="#FFCCBC"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Straw Hat - Base (Wide Brim) -->
+    <path
+        android:pathData="M 40 80 C 40 60 200 60 200 80 C 200 100 40 100 40 80 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="120" android:startY="65"
+                android:endX="120" android:endY="95"
+                android:type="linear">
+                <item android:offset="0" android:color="#FFF176"/>
+                <item android:offset="1" android:color="#FBC02D"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Straw Hat - Top (Crowned part) -->
+    <path
+        android:pathData="M 90 75 C 90 40 150 40 150 75 L 160 85 L 80 85 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="120" android:startY="45"
+                android:endX="120" android:endY="85"
+                android:type="linear">
+                <item android:offset="0" android:color="#FFEE58"/>
+                <item android:offset="1" android:color="#F9A825"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Hat Band (Brown Ribbon) -->
+    <path
+        android:pathData="M 85 80 L 155 80 L 158 85 L 82 85 Z"
+        android:fillColor="#795548" />
+
+    <!-- Eyes (Simple dots for friendly look) -->
+    <path
+        android:pathData="M 110 100 A 3 3 0 1 1 110 100.001 Z"
+        android:fillColor="#3E2723" />
+    <path
+        android:pathData="M 130 100 A 3 3 0 1 1 130 100.001 Z"
+        android:fillColor="#3E2723" />
+
+    <!-- Smile -->
+    <path
+        android:pathData="M 110 115 Q 120 122 130 115"
+        android:strokeWidth="2"
+        android:strokeColor="#D84315"
+        android:strokeLineCap="round" />
+
+</vector>

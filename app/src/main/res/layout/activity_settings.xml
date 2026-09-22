@@ -78,9 +78,13 @@
 
             <!-- Language -->
             <RelativeLayout
+                android:id="@+id/layoutLanguage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="12dp">
+                android:paddingVertical="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
