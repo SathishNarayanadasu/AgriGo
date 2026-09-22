@@ -1,6 +1,6 @@
 # AgriGo — Interview Explanation Guide
 
-## 1. Start with this 90-second introduction
+
 
 > **AgriGo is an Android application that digitizes agricultural support services.** It connects farmers who need to move crops or hire farm services with drivers, labour workers, and machinery providers.
 >
